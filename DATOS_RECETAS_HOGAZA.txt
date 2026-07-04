@@ -1,0 +1,431 @@
+================================================================
+  LA HOGAZA MADRE — DATOS DE RECETAS, COSTOS Y VALORES FIJOS
+  Referencia interna del sistema de gestión
+  Generado: Junio 2026
+================================================================
+
+ACLARACIÓN METODOLÓGICA
+----------------------------------------------------------------
+- Los costos por ingrediente se calculan multiplicando el gramaje
+  de cada ingrediente por su costo por unidad/gramo.
+- El total se redondea HACIA ARRIBA a un valor fijo operativo.
+- Sobre ese valor redondeado se definen montos fijos de:
+    • Reinversión (monto fijo en pesos por producto)
+    • Ganancia    (monto fijo en pesos por producto)
+- El precio de venta final = redondeado + reinversión + ganancia.
+- Cuando los costos reales superen el valor redondeado vigente,
+  se debe reajustar dicho valor hacia arriba nuevamente.
+
+================================================================
+  BLOQUE 1 — PIZZAS MASA MADRE (REDONDAS)
+================================================================
+
+────────────────────────────────────────────────────────────────
+MUZZA ENTERA
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $2.200
+ACEITUNA            $  374
+PURE DE TOMATE      $  213
+SAL                 $   15
+HARINA              $  244
+OREGANO             $   10
+TRIANGULITOS        $   25
+GAS                 $  740
+CEBOLLA             $  112
+AJO                 $  100
+ACEITE              $   44
+─────────────────────────
+Total real:         $4.477 → Redondeado: $4.500
+Reinversión fija:   $1.000
+Ganancia fija:      $5.500
+PRECIO VENTA:       $11.000
+
+────────────────────────────────────────────────────────────────
+MUZZA MITAD
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $1.150
+ACEITUNA            $   48
+PURE DE TOMATE      $   84
+SAL                 $    8
+HARINA              $  110
+OREGANO             $   50
+TRIANGULITOS        $   50
+GAS                 $  250
+CEBOLLA             $   52
+AJO                 $   50
+ACEITE              $   17
+CAJA CUADRADA       $  400
+─────────────────────────
+Total real:         $2.218 → Redondeado: $2.750
+Reinversión fija:   $  500
+Ganancia fija:      $2.750
+PRECIO VENTA:       $6.000
+
+────────────────────────────────────────────────────────────────
+MARGARITA ENTERA
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $2.200
+TOMATE              $  440
+ACEITUNA            $  374
+PURE DE TOMATE      $  213
+SAL                 $   15
+HARINA              $  244
+OREGANO             $   10
+TRIANGULITOS        $   25
+GAS                 $  740
+CEBOLLA             $  112
+AJO                 $  100
+ACEITE              $   44
+─────────────────────────
+Total real:         $4.917 → Redondeado: $5.500
+Reinversión fija:   $1.000
+Ganancia fija:      $5.500
+PRECIO VENTA:       $12.000
+
+────────────────────────────────────────────────────────────────
+MARGARITA MITAD
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $1.150
+TOMATE              $  138
+ACEITUNA            $   48
+PURE DE TOMATE      $   84
+SAL                 $    8
+HARINA              $  110
+OREGANO             $   50
+TRIANGULITOS        $   50
+GAS                 $  250
+CEBOLLA             $   52
+AJO                 $   50
+ACEITE              $   17
+CAJA CUADRADA       $  400
+─────────────────────────
+Total real:         $2.356 → Redondeado: $3.250
+Reinversión fija:   $  500
+Ganancia fija:      $2.750
+PRECIO VENTA:       $6.500
+
+────────────────────────────────────────────────────────────────
+NEVADA ENTERA
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $2.200
+JAMON               $1.650
+HUEVO               $  450
+ACEITUNA            $  374
+PURE DE TOMATE      $  213
+SAL                 $   15
+HARINA              $  244
+OREGANO             $   10
+TRIANGULITOS        $   25
+GAS                 $  740
+CEBOLLA             $  112
+AJO                 $  100
+ACEITE              $   44
+─────────────────────────
+Total real:         $6.577 → Redondeado: $7.000
+Reinversión fija:   $1.000
+Ganancia fija:      $5.500
+PRECIO VENTA:       $13.500
+
+────────────────────────────────────────────────────────────────
+NEVADA MITAD
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $1.150
+JAMON               $  825
+HUEVO               $  225
+ACEITUNA            $   48
+PURE DE TOMATE      $   84
+SAL                 $    8
+HARINA              $  110
+OREGANO             $   50
+TRIANGULITOS        $   50
+GAS                 $  250
+CEBOLLA             $   52
+AJO                 $   50
+ACEITE              $   17
+CAJA CUADRADA       $  400
+─────────────────────────
+Total real:         $3.268 → Redondeado: $3.750
+Reinversión fija:   $  500
+Ganancia fija:      $2.750
+PRECIO VENTA:       $7.000
+
+────────────────────────────────────────────────────────────────
+JAMÓN Y MORRÓN ENTERA
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $2.200
+JAMON               $1.650
+PIMIENTO            $  420
+ACEITUNA            $  374
+PURE DE TOMATE      $  213
+SAL                 $   15
+HARINA              $  244
+OREGANO             $   10
+TRIANGULITOS        $   25
+GAS                 $  740
+CEBOLLA             $  112
+AJO                 $  100
+ACEITE              $   44
+─────────────────────────
+Total real:         $6.547 → Redondeado: $7.000
+Reinversión fija:   $1.000
+Ganancia fija:      $5.500
+PRECIO VENTA:       $13.500
+
+────────────────────────────────────────────────────────────────
+JAMÓN Y MORRÓN MITAD
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $1.150
+JAMON               $  825
+PIMIENTO            $  210
+ACEITUNA            $   48
+PURE DE TOMATE      $   84
+SAL                 $    8
+HARINA              $  110
+OREGANO             $   50
+TRIANGULITOS        $   50
+GAS                 $  250
+CEBOLLA             $   52
+AJO                 $   50
+ACEITE              $   17
+CAJA CUADRADA       $  400
+─────────────────────────
+Total real:         $3.253 → Redondeado: $3.750
+Reinversión fija:   $  500
+Ganancia fija:      $2.750
+PRECIO VENTA:       $7.000
+
+================================================================
+  BLOQUE 2 — PIZZAS MEDIO METRO
+================================================================
+
+────────────────────────────────────────────────────────────────
+MUZZA ENTERA (½m)
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $3.300
+ACEITUNA            $  578
+PURE DE TOMATE      $  427
+CAJA RECTANGULAR    $  550
+SAL                 $   26
+HARINA              $  344
+OREGANO             $   20
+TRIANGULITOS        $   50
+GAS                 $  740
+CEBOLLA             $  224
+AJO                 $  200
+ACEITE              $   88
+─────────────────────────
+Total real:         $6.546 → Redondeado: $6.500
+Reinversión fija:   $2.000
+Ganancia fija:      $6.000
+PRECIO VENTA:       $14.500
+
+────────────────────────────────────────────────────────────────
+MUZZA MITAD (½m)
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $1.725
+ACEITUNA            $   64
+PURE DE TOMATE      $  168
+CAJA CUADRADA       $  400
+SAL                 $   13
+HARINA              $  155
+OREGANO             $  100
+TRIANGULITOS        $   10
+GAS                 $  250
+CEBOLLA             $  104
+AJO                 $  100
+ACEITE              $   33
+─────────────────────────
+Total real:         $3.122 → Redondeado: $4.000
+Reinversión fija:   $1.000
+Ganancia fija:      $3.000
+PRECIO VENTA:       $8.000
+
+────────────────────────────────────────────────────────────────
+MARGARITA ENTERA (½m)
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $3.300
+TOMATE              $  840
+ACEITUNA            $  578
+PURE DE TOMATE      $  427
+CAJA RECTANGULAR    $  550
+SAL                 $   26
+HARINA              $  344
+OREGANO             $   20
+TRIANGULITOS        $   50
+GAS                 $  740
+CEBOLLA             $  224
+AJO                 $  200
+ACEITE              $   88
+─────────────────────────
+Total real:         $7.376 → Redondeado: $7.500
+Reinversión fija:   $2.000
+Ganancia fija:      $6.000
+PRECIO VENTA:       $15.500
+
+────────────────────────────────────────────────────────────────
+MARGARITA MITAD (½m)
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $1.725
+TOMATE              $  263
+ACEITUNA            $   64
+PURE DE TOMATE      $  168
+CAJA CUADRADA       $  400
+SAL                 $   13
+HARINA              $  155
+OREGANO             $  100
+TRIANGULITOS        $   10
+GAS                 $  250
+CEBOLLA             $  104
+AJO                 $  100
+ACEITE              $   50
+─────────────────────────
+Total real:         $3.401 → Redondeado: $4.500
+Reinversión fija:   $1.000
+Ganancia fija:      $3.000
+PRECIO VENTA:       $8.500
+
+────────────────────────────────────────────────────────────────
+NEVADA ENTERA (½m)
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $3.300
+JAMON               $2.200
+HUEVO               $  675
+ACEITUNA            $  578
+PURE DE TOMATE      $  427
+CAJA RECTANGULAR    $  550
+SAL                 $   26
+HARINA              $  344
+OREGANO             $   20
+TRIANGULITOS        $   50
+GAS                 $  600
+CEBOLLA             $  224
+AJO                 $  200
+ACEITE              $   88
+─────────────────────────
+Total real:         $9.271 → Redondeado: $9.500
+Reinversión fija:   $2.000
+Ganancia fija:      $6.000
+PRECIO VENTA:       $17.500
+
+────────────────────────────────────────────────────────────────
+NEVADA MITAD (½m)
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $1.725
+JAMON               $  758
+HUEVO               $  338
+ACEITUNA            $   64
+PURE DE TOMATE      $  168
+CAJA CUADRADA       $  400
+SAL                 $   13
+HARINA              $  155
+OREGANO             $  100
+TRIANGULITOS        $   10
+GAS                 $  250
+CEBOLLA             $  104
+AJO                 $  100
+ACEITE              $   50
+─────────────────────────
+Total real:         $4.233 → Redondeado: $5.000
+Reinversión fija:   $1.000
+Ganancia fija:      $3.000
+PRECIO VENTA:       $9.000
+
+────────────────────────────────────────────────────────────────
+JAMÓN Y MORRÓN ENTERA (½m)
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $3.300
+JAMON               $2.200
+PIMIENTO            $  660
+ACEITUNA            $  578
+PURE DE TOMATE      $  427
+CAJA RECTANGULAR    $  550
+SAL                 $   26
+HARINA              $  344
+OREGANO             $   20
+TRIANGULITOS        $   50
+GAS                 $  740
+CEBOLLA             $  224
+AJO                 $  200
+ACEITE              $   88
+─────────────────────────
+Total real:         $9.396 → Redondeado: $9.500
+Reinversión fija:   $2.000
+Ganancia fija:      $6.000
+PRECIO VENTA:       $17.500
+
+────────────────────────────────────────────────────────────────
+JAMÓN Y MORRÓN MITAD (½m)
+────────────────────────────────────────────────────────────────
+Ingrediente         Costo
+QUESO               $1.725
+JAMON               $  758
+PIMIENTO            $  303
+ACEITUNA            $   64
+PURE DE TOMATE      $  168
+CAJA CUADRADA       $  400
+SAL                 $   13
+HARINA              $  155
+OREGANO             $  100
+TRIANGULITOS        $   10
+GAS                 $  250
+CEBOLLA             $  104
+AJO                 $  100
+ACEITE              $   50
+─────────────────────────
+Total real:         $4.198 → Redondeado: $5.000
+Reinversión fija:   $1.000
+Ganancia fija:      $3.000
+PRECIO VENTA:       $9.000
+
+================================================================
+  TABLA RESUMEN — VALORES FIJOS POR PRODUCTO
+================================================================
+
+PRODUCTO                        REDONDEADO  REINVERSIÓN  GANANCIA   P.VENTA
+──────────────────────────────────────────────────────────────────────────
+Redonda Muzza Entera              $4.500      $1.000      $5.500    $11.000
+Redonda Muzza Mitad               $2.750      $  500      $2.750    $ 6.000
+Redonda Margarita Entera          $5.500      $1.000      $5.500    $12.000
+Redonda Margarita Mitad           $3.250      $  500      $2.750    $ 6.500
+Redonda Nevada Entera             $7.000      $1.000      $5.500    $13.500
+Redonda Nevada Mitad              $3.750      $  500      $2.750    $ 7.000
+Redonda Jamón y Morrón Entera     $7.000      $1.000      $5.500    $13.500
+Redonda Jamón y Morrón Mitad      $3.750      $  500      $2.750    $ 7.000
+M.Metro Muzza Entera              $6.500      $2.000      $6.000    $14.500
+M.Metro Muzza Mitad               $4.000      $1.000      $3.000    $ 8.000
+M.Metro Margarita Entera          $7.500      $2.000      $6.000    $15.500
+M.Metro Margarita Mitad           $4.500      $1.000      $3.000    $ 8.500
+M.Metro Nevada Entera             $9.500      $2.000      $6.000    $17.500
+M.Metro Nevada Mitad              $5.000      $1.000      $3.000    $ 9.000
+M.Metro Jamón y Morrón Entera     $9.500      $2.000      $6.000    $17.500
+M.Metro Jamón y Morrón Mitad      $5.000      $1.000      $3.000    $ 9.000
+
+================================================================
+  NOTAS OPERATIVAS
+================================================================
+1. El valor "redondeado" es el techo de costo vigente para ese
+   producto. Mientras el costo real no lo supere, se usa ese valor.
+2. Cuando el costo real supere el redondeado vigente, se debe
+   presionar el botón de reajuste en el sistema para recalcular
+   y redondear hacia arriba nuevamente.
+3. Reinversión y Ganancia son montos FIJOS en pesos, no porcentajes.
+   Se multiplican por la cantidad vendida de ese producto.
+4. Precio de venta = Redondeado + Reinversión + Ganancia.
+5. Los valores de empanadas no están en esta planilla y deben
+   cargarse por separado en el sistema cuando estén definidos.
+================================================================
