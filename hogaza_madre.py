@@ -722,16 +722,16 @@ class StockTab(tk.Frame):
         tk.Label(self.frm_entradas,
                  text="Suma los valores ingresados al restante actual del Excel.",
                  font=("Arial", 8), fg=COLORS["fg_dim"],
-                 bg=COLORS["bg_panel"]).grid(row=0, column=0, columnspan=6, sticky="w", pady=(0, 6))
+                 bg=COLORS["bg_panel"]).grid(row=0, column=0, columnspan=4, sticky="w", pady=(0, 6))
 
         if items is None:
             datos = self._leer_todo_excel()
-            items = sorted(set(datos.keys()) | set(self.cfg.costos.keys()))
+            items = sorted(set(datos.keys()) | set(self.cfg.costos.keys()),
+                           key=lambda x: list(self.cfg.costos.keys()).index(x) if x in self.cfg.costos else 999)
 
         self.entradas = {}
-        cols = 3
         for idx, ins in enumerate(items):
-            col_base = (idx // 10) * (cols * 2)
+            col_base = (idx // 10) * 2
             row      = idx % 10
             tk.Label(self.frm_entradas, text=f"{ins}:",
                      font=("Arial", 8, "bold"), width=18, anchor="w",
@@ -744,13 +744,11 @@ class StockTab(tk.Frame):
             e.grid(row=row+1, column=col_base+1, padx=(0, 12), pady=2)
             self.entradas[ins] = e
 
-        num_filas = max(10, ((len(items) - 1) // 10 + 1) * 10)
-        btn_row = (len(items) - 1) // 10 * 10 + 11
         tk.Button(self.frm_entradas, text="GUARDAR STOCK INICIAL EN EXCEL",
                   command=self.guardar_stock,
                   bg=COLORS["green"], fg="white",
                   font=("Arial", 10, "bold"), pady=5).grid(
-                  row=btn_row, column=0, columnspan=6, sticky="ew", padx=8, pady=(10, 0))
+                  row=11, column=0, columnspan=4, sticky="ew", padx=8, pady=(10, 0))
 
     def _leer_todo_excel(self):
         """Lee todas las filas del Excel y devuelve {producto: {fila, inicio, ocupado, costo_ocu, restante}}."""
