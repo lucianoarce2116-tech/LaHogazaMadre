@@ -1,0 +1,16 @@
+# Configuracion especifica de cada PC (NO compartir)
+config_negocio.json
+
+# Datos de stock locales
+stock_la_hogaza_madre.xlsx
+
+# Balances generados por el programa
+balances/
+Balance_*.txt
+
+# Cache de Python
+__pycache__/
+*.pyc
+
+# Capturas de pantalla
+Captura de pantalla*.png
