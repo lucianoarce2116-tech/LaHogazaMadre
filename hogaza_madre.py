@@ -524,15 +524,18 @@ class PedidosTab(tk.Frame):
         try:
             wb = openpyxl.load_workbook(EXCEL_NAME)
             ws = wb["Stock General"]
-            for i in range(20):
-                row  = i + 4
-                prod = ws.cell(row=row, column=1).value
-                ini  = ws.cell(row=row, column=2).value or 0
-                ocu  = self.gastos_acumulados.get(prod, 0.0)
-                cu   = self.cfg.costos.get(prod, 0.0)
-                ws.cell(row=row, column=3, value=ocu)
-                ws.cell(row=row, column=4, value=ocu * cu)
-                ws.cell(row=row, column=5, value=max(0, ini - ocu))
+            fila = 4
+            while True:
+                prod = ws.cell(row=fila, column=1).value
+                if prod is None:
+                    break
+                ini  = ws.cell(row=fila, column=2).value or 0
+                ocu  = self.gastos_acumulados.get(str(prod), 0.0)
+                cu   = self.cfg.costos.get(str(prod), 0.0)
+                ws.cell(row=fila, column=3, value=ocu)
+                ws.cell(row=fila, column=4, value=ocu * cu)
+                ws.cell(row=fila, column=5, value=max(0, ini - ocu))
+                fila += 1
             wb.save(EXCEL_NAME)
 
             ahora = datetime.now()
@@ -702,88 +705,128 @@ class StockTab(tk.Frame):
         self.tree.pack(side="left", fill="both", expand=True)
         sb.pack(side="right", fill="y")
 
-        frm2 = tk.LabelFrame(self, text=" Cargar Stock Inicial ",
-                             font=("Arial", 9, "bold"),
-                             bg=COLORS["bg_panel"], fg=COLORS["fg_light"],
-                             padx=10, pady=8)
-        frm2.pack(fill="x", padx=12, pady=(0, 8))
+        self.frm_entradas = tk.LabelFrame(self, text=" Cargar Stock Inicial ",
+                                          font=("Arial", 9, "bold"),
+                                          bg=COLORS["bg_panel"], fg=COLORS["fg_light"],
+                                          padx=10, pady=8)
+        self.frm_entradas.pack(fill="x", padx=12, pady=(0, 8))
+        self._reconstruir_entradas()
 
-        tk.Label(frm2, text="Este panel suma los valores ingresados al restante actual del Excel.",
+        self.cargar_stock()
+
+    def _reconstruir_entradas(self, items=None):
+        """Crea/actualiza la grilla de entradas para carga de stock inicial."""
+        for w in self.frm_entradas.grid_slaves():
+            w.destroy()
+
+        tk.Label(self.frm_entradas,
+                 text="Suma los valores ingresados al restante actual del Excel.",
                  font=("Arial", 8), fg=COLORS["fg_dim"],
-                 bg=COLORS["bg_panel"]).grid(row=0, column=0, columnspan=4, sticky="w", pady=(0, 6))
+                 bg=COLORS["bg_panel"]).grid(row=0, column=0, columnspan=6, sticky="w", pady=(0, 6))
+
+        if items is None:
+            datos = self._leer_todo_excel()
+            items = sorted(set(datos.keys()) | set(self.cfg.costos.keys()))
 
         self.entradas = {}
-        insumos = list(self.cfg.costos.keys())
-        for idx, ins in enumerate(insumos):
-            col_base = (idx // 10) * 2
+        cols = 3
+        for idx, ins in enumerate(items):
+            col_base = (idx // 10) * (cols * 2)
             row      = idx % 10
-            tk.Label(frm2, text=f"{ins}:",
+            tk.Label(self.frm_entradas, text=f"{ins}:",
                      font=("Arial", 8, "bold"), width=18, anchor="w",
                      bg=COLORS["bg_panel"], fg=COLORS["fg_light"]).grid(
                      row=row+1, column=col_base, padx=(8, 2), pady=2, sticky="w")
-            e = tk.Entry(frm2, font=("Arial", 9), width=10, justify="center",
+            e = tk.Entry(self.frm_entradas, font=("Arial", 9), width=10, justify="center",
                          bg=COLORS["bg_entry"], fg=COLORS["fg_light"],
                          insertbackground="white")
             e.insert(0, "0")
             e.grid(row=row+1, column=col_base+1, padx=(0, 12), pady=2)
             self.entradas[ins] = e
 
-        tk.Button(frm2, text="GUARDAR STOCK INICIAL EN EXCEL",
+        num_filas = max(10, ((len(items) - 1) // 10 + 1) * 10)
+        btn_row = (len(items) - 1) // 10 * 10 + 11
+        tk.Button(self.frm_entradas, text="GUARDAR STOCK INICIAL EN EXCEL",
                   command=self.guardar_stock,
                   bg=COLORS["green"], fg="white",
                   font=("Arial", 10, "bold"), pady=5).grid(
-                  row=11, column=0, columnspan=4, sticky="ew", padx=8, pady=(10, 0))
+                  row=btn_row, column=0, columnspan=6, sticky="ew", padx=8, pady=(10, 0))
 
-        self.cargar_stock()
+    def _leer_todo_excel(self):
+        """Lee todas las filas del Excel y devuelve {producto: {fila, inicio, ocupado, costo_ocu, restante}}."""
+        datos = {}
+        if not os.path.exists(EXCEL_NAME):
+            return datos
+        try:
+            wb = openpyxl.load_workbook(EXCEL_NAME, data_only=True)
+            ws = wb["Stock General"]
+            fila = 4
+            while True:
+                prod = ws.cell(row=fila, column=1).value
+                if prod is None:
+                    break
+                prod = str(prod)
+                datos[prod] = {
+                    "fila": fila,
+                    "inicio":   float(ws.cell(row=fila, column=2).value or 0),
+                    "ocupado":  float(ws.cell(row=fila, column=3).value or 0),
+                    "costo_ocu": float(ws.cell(row=fila, column=4).value or 0),
+                    "restante": float(ws.cell(row=fila, column=5).value or 0),
+                }
+                fila += 1
+            wb.close()
+        except Exception:
+            pass
+        return datos
 
     def cargar_stock(self):
         for row in self.tree.get_children():
             self.tree.delete(row)
-        if not os.path.exists(EXCEL_NAME):
-            self.status_cb(f"No se encuentra {EXCEL_NAME}", COLORS["red"])
+        datos = self._leer_todo_excel()
+        if not datos:
+            self.status_cb(f"No se encuentra {EXCEL_NAME} o esta vacio", COLORS["red"])
             return
-        try:
-            wb = openpyxl.load_workbook(EXCEL_NAME, data_only=True)
-            ws = wb["Stock General"]
-            for i in range(20):
-                row  = i + 4
-                vals = [ws.cell(row=row, column=c).value for c in range(1, 6)]
-                if vals[0] is None:
-                    continue
-                prod     = str(vals[0])
-                inicio   = float(vals[1] or 0)
-                ocupado  = float(vals[2] or 0)
-                costo_o  = float(vals[3] or 0)
-                restante = float(vals[4] or 0)
-                pct = (restante / inicio * 100) if inicio > 0 else 100
-                tag = "bajo" if pct < 20 else ("medio" if pct < 50 else "ok")
-                self.tree.insert("", "end", values=(
-                    prod,
-                    f"{inicio:g}", f"{ocupado:g}",
-                    f"${costo_o:,.2f}", f"{restante:g}"
-                ), tags=(tag,))
-            self.status_cb("Stock actualizado desde Excel", COLORS["teal"])
-        except Exception as e:
-            self.status_cb(f"Error al leer Excel: {e}", COLORS["red"])
+        for prod, d in datos.items():
+            pct = (d["restante"] / d["inicio"] * 100) if d["inicio"] > 0 else 100
+            tag = "bajo" if pct < 20 else ("medio" if pct < 50 else "ok")
+            self.tree.insert("", "end", values=(
+                prod,
+                f"{d['inicio']:g}", f"{d['ocupado']:g}",
+                f"${d['costo_ocu']:,.2f}", f"{d['restante']:g}"
+            ), tags=(tag,))
+        # Reconstruir entradas si hay productos nuevos en el Excel
+        items_actuales = set(self.entradas.keys())
+        items_excel = set(datos.keys())
+        if items_excel - items_actuales:
+            self._reconstruir_entradas(items=sorted(items_actuales | items_excel))
+        self.status_cb("Stock actualizado desde Excel", COLORS["teal"])
 
     def guardar_stock(self):
         if not os.path.exists(EXCEL_NAME):
             self._crear_excel()
         try:
-            restantes = self._leer_restantes()
+            datos = self._leer_todo_excel()
             wb = openpyxl.load_workbook(EXCEL_NAME)
             ws = wb["Stock General"]
-            insumos = list(self.cfg.costos.keys())
-            for idx, ins in enumerate(insumos):
+
+            # Obtener todos los productos entre Excel y costos
+            todos = set(datos.keys()) | set(self.cfg.costos.keys()) | set(self.entradas.keys())
+            for prod in sorted(todos):
+                fila = datos[prod]["fila"] if prod in datos else None
+                if fila is None:
+                    # Nuevo producto: agregar al final
+                    fila = max((d["fila"] for d in datos.values()), default=3) + 1
+                    ws.cell(row=fila, column=1, value=prod)
                 try:
-                    nuevo = float(self.entradas[ins].get().strip() or 0)
+                    nuevo = float(self.entradas.get(prod, tk.Entry()).get().strip() or 0)
                 except ValueError:
                     nuevo = 0.0
-                total = restantes.get(ins, 0.0) + nuevo
-                row   = idx + 4
-                ws.cell(row=row, column=2, value=total)
-                ws.cell(row=row, column=3, value=0.0)
-                ws.cell(row=row, column=5, value=total)
+                restante_anterior = datos[prod]["restante"] if prod in datos else 0.0
+                total = restante_anterior + nuevo
+                ws.cell(row=fila, column=2, value=total)
+                ws.cell(row=fila, column=3, value=0.0)
+                ws.cell(row=fila, column=4, value=0.0)
+                ws.cell(row=fila, column=5, value=total)
             wb.save(EXCEL_NAME)
             for e in self.entradas.values():
                 e.delete(0, tk.END)
@@ -794,17 +837,8 @@ class StockTab(tk.Frame):
             messagebox.showerror("Error", f"No se pudo guardar el stock:\n{e}")
 
     def _leer_restantes(self):
-        restantes = {}
-        try:
-            wb = openpyxl.load_workbook(EXCEL_NAME)
-            ws = wb["Stock General"]
-            insumos = list(self.cfg.costos.keys())
-            for idx, ins in enumerate(insumos):
-                val = ws.cell(row=idx + 4, column=5).value
-                restantes[ins] = float(val) if val else 0.0
-        except Exception:
-            pass
-        return restantes
+        datos = self._leer_todo_excel()
+        return {p: d["restante"] for p, d in datos.items()}
 
     def _crear_excel(self):
         wb = openpyxl.Workbook()
