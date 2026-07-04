@@ -715,40 +715,63 @@ class StockTab(tk.Frame):
         self.cargar_stock()
 
     def _reconstruir_entradas(self, items=None):
-        """Crea/actualiza la grilla de entradas para carga de stock inicial."""
-        for w in self.frm_entradas.grid_slaves():
+        """Crea/actualiza la grilla de entradas para carga de stock inicial (con scroll)."""
+        for w in self.frm_entradas.winfo_children():
             w.destroy()
 
-        tk.Label(self.frm_entradas,
-                 text="Suma los valores ingresados al restante actual del Excel.",
-                 font=("Arial", 8), fg=COLORS["fg_dim"],
-                 bg=COLORS["bg_panel"]).grid(row=0, column=0, columnspan=4, sticky="w", pady=(0, 6))
+        # Canvas + Scrollbar para que el contenido sea desplazable
+        canvas = tk.Canvas(self.frm_entradas, borderwidth=0, highlightthickness=0,
+                           bg=COLORS["bg_panel"])
+        sb = ttk.Scrollbar(self.frm_entradas, orient="vertical", command=canvas.yview)
+        inner = tk.Frame(canvas, bg=COLORS["bg_panel"])
+        inner.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0), window=inner, anchor="nw")
+        canvas.configure(yscrollcommand=sb.set)
+        canvas.bind("<Configure>", lambda e: canvas.itemconfig(1, width=e.width))
+        canvas.pack(side="left", fill="both", expand=True)
+        sb.pack(side="right", fill="y")
+        # Scroll con rueda del mouse (solo sobre el canvas)
+        def _on_mw(ev):
+            canvas.yview_scroll(int(-1 * ev.delta / 120), "units")
+        canvas.bind("<MouseWheel>", _on_mw)
+        inner.bind("<MouseWheel>", _on_mw)
 
         if items is None:
             datos = self._leer_todo_excel()
             items = sorted(set(datos.keys()) | set(self.cfg.costos.keys()),
                            key=lambda x: list(self.cfg.costos.keys()).index(x) if x in self.cfg.costos else 999)
 
+        # 4 grupos de columnas para ocupar mejor el ancho y reducir altura
+        num_grupos = 4
+        total_cols = num_grupos * 2
+
+        tk.Label(inner, text="Suma los valores ingresados al restante actual del Excel.",
+                 font=("Arial", 8), fg=COLORS["fg_dim"],
+                 bg=COLORS["bg_panel"]).grid(row=0, column=0, columnspan=total_cols, sticky="w", pady=(0, 6))
+
         self.entradas = {}
+        filas_por_grupo = (len(items) + num_grupos - 1) // num_grupos
         for idx, ins in enumerate(items):
-            col_base = (idx // 10) * 2
-            row      = idx % 10
-            tk.Label(self.frm_entradas, text=f"{ins}:",
+            col_group = idx % num_grupos
+            col_base = col_group * 2
+            row = idx // num_grupos + 1
+            tk.Label(inner, text=f"{ins}:",
                      font=("Arial", 8, "bold"), width=18, anchor="w",
                      bg=COLORS["bg_panel"], fg=COLORS["fg_light"]).grid(
-                     row=row+1, column=col_base, padx=(8, 2), pady=2, sticky="w")
-            e = tk.Entry(self.frm_entradas, font=("Arial", 9), width=10, justify="center",
+                     row=row, column=col_base, padx=(8, 2), pady=2, sticky="w")
+            e = tk.Entry(inner, font=("Arial", 9), width=10, justify="center",
                          bg=COLORS["bg_entry"], fg=COLORS["fg_light"],
                          insertbackground="white")
             e.insert(0, "0")
-            e.grid(row=row+1, column=col_base+1, padx=(0, 12), pady=2)
+            e.grid(row=row, column=col_base+1, padx=(0, 12), pady=2)
             self.entradas[ins] = e
 
-        tk.Button(self.frm_entradas, text="GUARDAR STOCK INICIAL EN EXCEL",
+        btn_row = filas_por_grupo + 1
+        tk.Button(inner, text="GUARDAR STOCK INICIAL EN EXCEL",
                   command=self.guardar_stock,
                   bg=COLORS["green"], fg="white",
                   font=("Arial", 10, "bold"), pady=5).grid(
-                  row=11, column=0, columnspan=4, sticky="ew", padx=8, pady=(10, 0))
+                  row=btn_row, column=0, columnspan=total_cols, sticky="ew", padx=8, pady=(10, 0))
 
     def _leer_todo_excel(self):
         """Lee todas las filas del Excel y devuelve {producto: {fila, inicio, ocupado, costo_ocu, restante}}."""
