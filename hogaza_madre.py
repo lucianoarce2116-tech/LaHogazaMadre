@@ -23,18 +23,18 @@ APP_VERSION       = "2.1"
 REAJUSTE_MULTIPLO = 250
 
 COLORS = {
-    "bg_dark":    "#1C313A",
-    "bg_mid":     "#263238",
-    "bg_panel":   "#37474F",
-    "bg_entry":   "#455A64",
-    "accent":     "#FF8F00",
-    "green":      "#2E7D32",
+    "bg_dark":    "#1A1412",
+    "bg_mid":     "#241D1B",
+    "bg_panel":   "#332B29",
+    "bg_entry":   "#483E3C",
+    "accent":     "#FF6F00",
+    "green":      "#388E3C",
     "red":        "#C62828",
-    "purple":     "#6A1B9A",
-    "blue":       "#1565C0",
-    "teal":       "#00695C",
-    "fg_light":   "#ECEFF1",
-    "fg_dim":     "#90A4AE",
+    "purple":     "#7B1FA2",
+    "blue":       "#1976D2",
+    "teal":       "#00897B",
+    "fg_light":   "#FFF8F0",
+    "fg_dim":     "#A6948E",
     "espera_bg":  "#0D47A1", "espera_fg":  "#BBDEFB",
     "armado_bg":  "#1B5E20", "armado_fg":  "#C8E6C9",
     "horno_bg":   "#B71C1C", "horno_fg":   "#FFCDD2",
@@ -1457,49 +1457,54 @@ class App(tk.Tk):
         st = ttk.Style()
         st.theme_use("clam")
 
-        st.configure("TNotebook",          background=COLORS["bg_dark"],  borderwidth=0)
-        st.configure("TNotebook.Tab",      background=COLORS["bg_panel"], foreground=COLORS["fg_dim"],
-                     font=("Arial", 10, "bold"), padding=[14, 6])
+        st.configure(".",                   font=("Segoe UI", 10))
+        st.configure("TNotebook",           background=COLORS["bg_dark"],  borderwidth=0)
+        st.configure("TNotebook.Tab",       background=COLORS["bg_panel"], foreground=COLORS["fg_dim"],
+                     font=("Segoe UI", 10, "bold"), padding=[16, 7])
         st.map("TNotebook.Tab",
                background=[("selected", COLORS["bg_mid"])],
                foreground=[("selected", COLORS["accent"])])
 
-        st.configure("Menu.TCombobox",     font=("Arial", 11), padding=5,
+        st.configure("Menu.TCombobox",      font=("Segoe UI", 11), padding=5,
                      fieldbackground=COLORS["bg_entry"], foreground=COLORS["fg_light"],
                      arrowcolor=COLORS["accent"])
         st.map("Menu.TCombobox",
                fieldbackground=[("readonly", COLORS["bg_entry"])],
                foreground=[("readonly", COLORS["fg_light"])])
 
-        st.configure("Treeview",           background=COLORS["bg_dark"],
-                     foreground=COLORS["fg_light"], rowheight=26,
-                     fieldbackground=COLORS["bg_dark"], font=("Arial", 9))
-        st.configure("Treeview.Heading",   background=COLORS["bg_panel"],
-                     foreground=COLORS["accent"], font=("Arial", 9, "bold"))
-        st.map("Treeview",                background=[("selected", COLORS["bg_entry"])])
+        st.configure("Treeview",            background=COLORS["bg_dark"],
+                     foreground=COLORS["fg_light"], rowheight=28,
+                     fieldbackground=COLORS["bg_dark"], font=("Segoe UI", 9))
+        st.configure("Treeview.Heading",    background=COLORS["bg_panel"],
+                     foreground=COLORS["accent"], font=("Segoe UI", 9, "bold"))
+        st.map("Treeview",                 background=[("selected", COLORS["bg_entry"])])
 
-        self.option_add("*TCombobox*Listbox.font",             ("Arial", 11))
+        self.option_add("*TCombobox*Listbox.font",             ("Segoe UI", 11))
         self.option_add("*TCombobox*Listbox.background",       COLORS["bg_panel"])
         self.option_add("*TCombobox*Listbox.foreground",       COLORS["fg_light"])
         self.option_add("*TCombobox*Listbox.selectBackground", COLORS["accent"])
         self.option_add("*TCombobox*Listbox.selectForeground", "white")
 
     def _build_ui(self):
-        hdr = tk.Frame(self, bg=COLORS["bg_dark"], pady=8)
+        hdr = tk.Frame(self, bg=COLORS["bg_mid"], pady=0)
         hdr.pack(fill="x")
-        tk.Label(hdr, text="LA HOGAZA MADRE",
-                 font=("Arial", 15, "bold"),
-                 fg=COLORS["accent"], bg=COLORS["bg_dark"]).pack(side="left", padx=18)
-        tk.Label(hdr, text=f"Sistema de Gestión v{APP_VERSION}",
-                 font=("Arial", 9), fg=COLORS["fg_dim"],
-                 bg=COLORS["bg_dark"]).pack(side="left")
-        tk.Label(hdr, text=datetime.now().strftime("%A %d/%m/%Y"),
-                 font=("Arial", 9), fg=COLORS["fg_dim"],
-                 bg=COLORS["bg_dark"]).pack(side="right", padx=18)
+        inner = tk.Frame(hdr, bg=COLORS["bg_mid"], pady=10)
+        inner.pack(fill="x", padx=18)
+        tk.Label(inner, text="LA HOGAZA MADRE",
+                 font=("Segoe UI", 16, "bold"),
+                 fg=COLORS["accent"], bg=COLORS["bg_mid"]).pack(side="left")
+        tk.Label(inner, text=f"Gestión de Pedidos v{APP_VERSION}",
+                 font=("Segoe UI", 9), fg=COLORS["fg_dim"],
+                 bg=COLORS["bg_mid"]).pack(side="left", padx=(10, 0))
+        tk.Label(inner, text=datetime.now().strftime("%A %d/%m/%Y").upper(),
+                 font=("Segoe UI", 8, "bold"), fg=COLORS["fg_dim"],
+                 bg=COLORS["bg_mid"]).pack(side="right", padx=(0, 4))
+        # Linea decorativa
+        tk.Frame(hdr, height=2, bg=COLORS["accent"]).pack(fill="x")
 
         self.lbl_status = tk.Label(self, text="Sistema listo.",
-                                    font=("Arial", 8), fg=COLORS["fg_dim"],
-                                    bg=COLORS["bg_dark"], anchor="w", padx=12)
+                                    font=("Segoe UI", 9), fg=COLORS["fg_dim"],
+                                    bg=COLORS["bg_dark"], anchor="w", padx=16, pady=4)
         self.lbl_status.pack(fill="x", side="bottom")
 
         self.nb = ttk.Notebook(self)
