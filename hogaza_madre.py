@@ -18,6 +18,7 @@ from datetime import datetime
 CONFIG_FILE       = "config_negocio.json"
 CONFIG_DEFAULTS   = "config_default.json"
 EXCEL_NAME        = "stock_la_hogaza_madre.xlsx"
+VENTAS_HIST_FILE  = "ventas_historicas.json"
 APP_VERSION       = "2.1"
 REAJUSTE_MULTIPLO = 250
 
@@ -149,6 +150,22 @@ def hora_key(s):
         return int(h) * 60 + int(m)
     except Exception:
         return 9999
+
+def cargar_ventas_historicas():
+    if not os.path.exists(VENTAS_HIST_FILE):
+        return {"total": 0, "productos": {}}
+    try:
+        with open(VENTAS_HIST_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {"total": 0, "productos": {}}
+
+def guardar_ventas_historicas(data):
+    try:
+        with open(VENTAS_HIST_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -648,6 +665,15 @@ class PedidosTab(tk.Frame):
                 path_av = os.path.join(os.path.expanduser("~"), "Desktop", f"Balance_{ahora.strftime('%d-%m-%Y')}.txt")
                 with open(path_av, "w", encoding="utf-8") as f:
                     f.write(r)
+
+            # ── GUARDAR VENTAS HISTORICAS ──
+            hist = cargar_ventas_historicas()
+            hist["total"] += total_ventas
+            for p in self.pedidos_totales:
+                for it in p.get("items", []):
+                    prod = it["prod"]
+                    hist["productos"][prod] = hist["productos"].get(prod, 0) + it["cant"]
+            guardar_ventas_historicas(hist)
 
             messagebox.showinfo("Servicio cerrado",
                 f"Balance generado y stock actualizado.\n\n"
@@ -1313,6 +1339,98 @@ class ConfigTab(tk.Frame):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+#  PESTAÑA 4 — ESTADÍSTICAS DE VENTAS
+# ══════════════════════════════════════════════════════════════════════════════
+class EstadisticasTab(tk.Frame):
+
+    COLORES_BARRA = ["#FF8F00", "#E65100", "#C62828", "#6A1B9A", "#1565C0",
+                     "#00695C", "#2E7D32", "#424242", "#37474F", "#455A64"]
+
+    def __init__(self, parent, status_cb):
+        super().__init__(parent, bg=COLORS["bg_mid"])
+        self.status_cb = status_cb
+        self._build_ui()
+
+    def _build_ui(self):
+        hdr = tk.Frame(self, bg=COLORS["bg_mid"], pady=6)
+        hdr.pack(fill="x", padx=12, pady=(8, 0))
+        tk.Label(hdr, text="ESTADÍSTICAS DE VENTAS", font=("Arial", 13, "bold"),
+                 fg=COLORS["accent"], bg=COLORS["bg_mid"]).pack(side="left")
+        tk.Button(hdr, text="Actualizar", command=self.actualizar,
+                  bg=COLORS["blue"], fg="white",
+                  font=("Arial", 9, "bold")).pack(side="right")
+
+        # Contador total
+        self.lbl_total = tk.Label(self, text="Cargando...",
+                                  font=("Arial", 20, "bold"),
+                                  fg=COLORS["accent"], bg=COLORS["bg_mid"])
+        self.lbl_total.pack(fill="x", padx=12, pady=(4, 0))
+
+        tk.Label(self, text="(ventas acumuladas desde que se usa el sistema)",
+                 font=("Arial", 8), fg=COLORS["fg_dim"],
+                 bg=COLORS["bg_mid"]).pack(fill="x", padx=12)
+
+        # Canvas para el grafico de barras
+        frm = tk.LabelFrame(self, text=" Productos más vendidos ",
+                            font=("Arial", 9, "bold"),
+                            bg=COLORS["bg_panel"], fg=COLORS["fg_light"])
+        frm.pack(fill="both", expand=True, padx=12, pady=8)
+        self.canvas = tk.Canvas(frm, bg=COLORS["bg_dark"],
+                                highlightthickness=0)
+        self.canvas.pack(fill="both", expand=True)
+
+        self.actualizar()
+
+    def actualizar(self):
+        self.canvas.delete("all")
+        data = cargar_ventas_historicas()
+        total = data.get("total", 0)
+        prods = data.get("productos", {})
+        self.lbl_total.config(text=f"${total:,.0f}" if total > 1000 else f"${total}")
+
+        # Ordenar productos por cantidad vendida (desc)
+        ranking = sorted(prods.items(), key=lambda x: -x[1])[:10]
+        if not ranking:
+            self.canvas.create_text(300, 60, text="Aún no hay ventas registradas.",
+                                    fill=COLORS["fg_dim"],
+                                    font=("Arial", 12), anchor="center")
+            return
+
+        max_cant = ranking[0][1]
+        margen_izq = 190
+        margen_der = 70
+        alto_barra = 30
+        espacio = 6
+
+        self.canvas.update_idletasks()
+        ancho_canvas = max(self.canvas.winfo_width(), 400)
+        ancho_barra_max = ancho_canvas - margen_izq - margen_der
+
+        inicio_y = 15
+        for i, (prod, cant) in enumerate(ranking):
+            y = inicio_y + i * (alto_barra + espacio)
+            # Nombre del producto
+            self.canvas.create_text(margen_izq - 8, y + alto_barra / 2,
+                                    text=prod, anchor="e",
+                                    fill=COLORS["fg_light"],
+                                    font=("Arial", 8, "bold"))
+            # Barra
+            ancho = int((cant / max_cant) * ancho_barra_max) if max_cant > 0 else 0
+            color = self.COLORES_BARRA[i % len(self.COLORES_BARRA)]
+            self.canvas.create_rectangle(margen_izq, y,
+                                         margen_izq + max(ancho, 4), y + alto_barra,
+                                         fill=color, outline="")
+            # Cantidad al final de la barra
+            self.canvas.create_text(margen_izq + max(ancho, 4) + 6, y + alto_barra / 2,
+                                    text=str(cant), anchor="w",
+                                    fill=COLORS["accent"],
+                                    font=("Arial", 9, "bold"))
+
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        self.status_cb("Estadísticas actualizadas", COLORS["teal"])
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 #  VENTANA PRINCIPAL
 # ══════════════════════════════════════════════════════════════════════════════
 class App(tk.Tk):
@@ -1387,13 +1505,15 @@ class App(tk.Tk):
         self.nb = ttk.Notebook(self)
         self.nb.pack(fill="both", expand=True, padx=8, pady=(0, 4))
 
-        self.tab_pedidos = PedidosTab(self.nb, self.cfg, self._status)
-        self.tab_stock   = StockTab(self.nb,   self.cfg, self._status)
-        self.tab_config  = ConfigTab(self.nb,  self.cfg, self._status, self._on_config_saved)
+        self.tab_pedidos  = PedidosTab(self.nb,    self.cfg, self._status)
+        self.tab_stock    = StockTab(self.nb,      self.cfg, self._status)
+        self.tab_config   = ConfigTab(self.nb,     self.cfg, self._status, self._on_config_saved)
+        self.tab_estadisticas = EstadisticasTab(self.nb, self._status)
 
-        self.nb.add(self.tab_pedidos, text="  Gestión de Pedidos  ")
-        self.nb.add(self.tab_stock,   text="  Control de Stock  ")
-        self.nb.add(self.tab_config,  text="  Carta y Recetas  ")
+        self.nb.add(self.tab_pedidos,  text="  Gestión de Pedidos  ")
+        self.nb.add(self.tab_stock,    text="  Control de Stock  ")
+        self.nb.add(self.tab_config,   text="  Carta y Recetas  ")
+        self.nb.add(self.tab_estadisticas, text="  Estadísticas  ")
 
         self.bind("<Return>", lambda e: self.tab_pedidos.agregar_producto())
         self.bind("<F5>",     lambda e: self.tab_pedidos.guardar_pedido())

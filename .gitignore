@@ -8,6 +8,9 @@ stock_la_hogaza_madre.xlsx
 balances/
 Balance_*.txt
 
+# Ventas historicas (cada PC tiene sus propios datos)
+ventas_historicas.json
+
 # Cache de Python
 __pycache__/
 *.pyc
