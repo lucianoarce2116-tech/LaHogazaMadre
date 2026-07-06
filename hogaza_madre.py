@@ -193,139 +193,151 @@ class PedidosTab(tk.Frame):
 
     def _build_header(self):
         hdr = tk.Frame(self, bg=COLORS["bg_mid"], pady=6)
-        hdr.pack(fill="x", padx=12, pady=(8, 0))
-        tk.Label(hdr, text="GESTIÓN DE PEDIDOS", font=("Arial", 13, "bold"),
-                 fg=COLORS["accent"], bg=COLORS["bg_mid"]).pack(side="left")
-        self.lbl_turno = tk.Label(hdr, text="$0  |  0 pedidos",
-                                  font=("Arial", 10), fg=COLORS["fg_light"],
+        hdr.pack(fill="x", padx=16, pady=(10, 0))
+        tk.Label(hdr, text="Pedidos", font=("Segoe UI", 14, "bold"),
+                 fg=COLORS["fg_light"], bg=COLORS["bg_mid"]).pack(side="left")
+        self.lbl_turno = tk.Label(hdr, text="$0  ·  0 pedidos",
+                                  font=("Segoe UI", 10), fg=COLORS["fg_dim"],
                                   bg=COLORS["bg_mid"])
         self.lbl_turno.pack(side="right")
 
     def _build_form(self):
-        frm = tk.LabelFrame(self, text=" Nuevo Pedido ",
-                            font=("Arial", 9, "bold"),
-                            bg=COLORS["bg_panel"], fg=COLORS["fg_light"],
-                            padx=8, pady=6)
-        frm.pack(fill="x", padx=12, pady=(4, 0))
+        frm = tk.Frame(self, bg=COLORS["bg_panel"], padx=14, pady=12)
+        frm.pack(fill="x", padx=16, pady=(8, 0))
 
-        c1 = tk.Frame(frm, bg=COLORS["bg_panel"])
-        c1.grid(row=0, column=0, padx=8, sticky="nw")
-        for r, (lbl, w) in enumerate([("Cliente:", 18), ("Hora (HH:MM):", 10), ("Pago:", 0)]):
-            tk.Label(c1, text=lbl, font=("Arial", 9, "bold"),
-                     bg=COLORS["bg_panel"], fg=COLORS["fg_light"]).grid(row=r, column=0, sticky="w", pady=2)
+        # Title inside card
+        tk.Label(frm, text="Nuevo Pedido", font=("Segoe UI", 10, "bold"),
+                 fg=COLORS["accent"], bg=COLORS["bg_panel"]).pack(anchor="w", pady=(0, 8))
 
-        self.entry_nombre = tk.Entry(c1, font=("Arial", 10), width=18,
+        row1 = tk.Frame(frm, bg=COLORS["bg_panel"])
+        row1.pack(fill="x")
+        # Col 1: cliente, hora, pago
+        c1 = tk.Frame(row1, bg=COLORS["bg_panel"])
+        c1.pack(side="left", fill="y", padx=(0, 16))
+        for lbl in ("Cliente", "Hora (HH:MM)", "Pago"):
+            tk.Label(c1, text=lbl, font=("Segoe UI", 9, "bold"),
+                     bg=COLORS["bg_panel"], fg=COLORS["fg_dim"]).pack(anchor="w", pady=(4, 0))
+
+        c1e = tk.Frame(row1, bg=COLORS["bg_panel"])
+        c1e.pack(side="left", fill="y", padx=(8, 0))
+        self.entry_nombre = tk.Entry(c1e, font=("Segoe UI", 10), width=18,
                                      bg=COLORS["bg_entry"], fg=COLORS["fg_light"],
                                      insertbackground="white")
-        self.entry_nombre.grid(row=0, column=1, padx=6, pady=2)
-
-        self.entry_hora = tk.Entry(c1, font=("Arial", 10), width=10,
+        self.entry_nombre.pack(pady=(2, 0))
+        self.entry_hora = tk.Entry(c1e, font=("Segoe UI", 10), width=10,
                                     bg=COLORS["bg_entry"], fg=COLORS["fg_light"],
                                     insertbackground="white")
         self.entry_hora.insert(0, "21:00")
-        self.entry_hora.grid(row=1, column=1, padx=6, pady=2, sticky="w")
-
-        self.combo_pago = ttk.Combobox(c1, values=["NO PAGO", "SÍ - PAGO"],
+        self.entry_hora.pack(pady=(4, 0), anchor="w")
+        self.combo_pago = ttk.Combobox(c1e, values=["NO PAGO", "SÍ - PAGO"],
                                        state="readonly", width=12)
         self.combo_pago.current(0)
-        self.combo_pago.grid(row=2, column=1, padx=6, pady=2, sticky="w")
+        self.combo_pago.pack(pady=(4, 0), anchor="w")
 
-        c2 = tk.Frame(frm, bg=COLORS["bg_panel"])
-        c2.grid(row=0, column=1, padx=8, sticky="nw")
-        tk.Label(c2, text="Variedad:", font=("Arial", 9, "bold"),
-                 bg=COLORS["bg_panel"], fg=COLORS["fg_light"]).grid(row=0, column=0, sticky="w")
-
-        self.combo_producto = ttk.Combobox(c2, state="readonly", width=36,
+        # Col 2: producto, cantidad
+        c2 = tk.Frame(row1, bg=COLORS["bg_panel"])
+        c2.pack(side="left", fill="y", padx=(0, 16))
+        tk.Label(c2, text="Variedad", font=("Segoe UI", 9, "bold"),
+                 bg=COLORS["bg_panel"], fg=COLORS["fg_dim"]).pack(anchor="w", pady=(4, 0))
+        self.combo_producto = ttk.Combobox(c2, state="readonly", width=30,
                                            style="Menu.TCombobox")
-        self.combo_producto.grid(row=0, column=1, columnspan=2, pady=2, padx=4)
+        self.combo_producto.pack(pady=(2, 0), fill="x")
 
-        tk.Label(c2, text="Cantidad:", font=("Arial", 9, "bold"),
-                 bg=COLORS["bg_panel"], fg=COLORS["fg_light"]).grid(row=1, column=0, sticky="w")
-        self.entry_cant = tk.Entry(c2, font=("Arial", 11), width=6, justify="center",
+        qty_frm = tk.Frame(c2, bg=COLORS["bg_panel"])
+        qty_frm.pack(pady=(6, 0), anchor="w")
+        tk.Label(qty_frm, text="Cant.", font=("Segoe UI", 9, "bold"),
+                 bg=COLORS["bg_panel"], fg=COLORS["fg_dim"]).pack(side="left")
+        self.entry_cant = tk.Entry(qty_frm, font=("Segoe UI", 11), width=5, justify="center",
                                     bg=COLORS["bg_entry"], fg=COLORS["fg_light"],
                                     insertbackground="white")
         self.entry_cant.insert(0, "1")
-        self.entry_cant.grid(row=1, column=1, pady=2, padx=4, sticky="w")
-
-        tk.Button(c2, text="+ Sumar", command=self.agregar_producto,
+        self.entry_cant.pack(side="left", padx=(6, 4))
+        tk.Button(qty_frm, text="+ Agregar", command=self.agregar_producto,
                   bg=COLORS["accent"], fg="white",
-                  font=("Arial", 9, "bold"), padx=6).grid(row=1, column=2, padx=4)
-
-        tk.Button(c2, text="↩ Quitar último", command=self.quitar_ultimo,
+                  font=("Segoe UI", 9, "bold"), padx=10, pady=2).pack(side="left")
+        tk.Button(qty_frm, text="↩ Quitar", command=self.quitar_ultimo,
                   bg=COLORS["bg_entry"], fg="white",
-                  font=("Arial", 8)).grid(row=2, column=1, columnspan=2,
-                                          sticky="w", padx=4, pady=2)
+                  font=("Segoe UI", 8), padx=8).pack(side="left", padx=(4, 0))
 
-        c3 = tk.Frame(frm, bg=COLORS["bg_panel"])
-        c3.grid(row=0, column=2, padx=8, sticky="nsew")
-        self.txt_resumen = tk.Text(c3, height=5, width=30, font=("Arial", 9),
+        # Col 3: resumen + wsp
+        c3 = tk.Frame(row1, bg=COLORS["bg_panel"])
+        c3.pack(side="left", fill="both", expand=True)
+        rsum = tk.Frame(c3, bg=COLORS["bg_panel"])
+        rsum.pack(fill="both", expand=True)
+        tk.Label(rsum, text="Resumen", font=("Segoe UI", 9, "bold"),
+                 bg=COLORS["bg_panel"], fg=COLORS["fg_dim"]).pack(anchor="w", pady=(4, 0))
+        self.txt_resumen = tk.Text(rsum, height=5, font=("Segoe UI", 9),
                                     bg=COLORS["bg_dark"], fg=COLORS["fg_light"],
-                                    state="disabled", relief="flat", padx=4)
-        self.txt_resumen.pack(side="left")
-        tk.Button(c3, text="Copiar\nWsp", command=self.copiar_wsp,
+                                    state="disabled", relief="flat", padx=6, pady=4)
+        self.txt_resumen.pack(side="left", fill="both", expand=True, pady=(2, 0))
+        tk.Button(rsum, text="📋\nCopiar\nWsp", command=self.copiar_wsp,
                   bg=COLORS["bg_entry"], fg="white",
-                  font=("Arial", 8, "bold"), padx=4).pack(side="left", fill="y", padx=4)
+                  font=("Segoe UI", 8, "bold"), width=4).pack(side="left", padx=(6, 0), pady=(2, 0))
 
+        # Action buttons row
         acc = tk.Frame(frm, bg=COLORS["bg_panel"])
-        acc.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(6, 0))
-        tk.Button(acc, text="GUARDAR PEDIDO Y ENCOLAR",
+        acc.pack(fill="x", pady=(10, 0))
+        tk.Button(acc, text="💾 GUARDAR PEDIDO",
                   command=self.guardar_pedido,
                   bg=COLORS["green"], fg="white",
-                  font=("Arial", 10, "bold"), pady=5).pack(side="left", fill="x",
-                                                            expand=True, padx=(0, 6))
+                  font=("Segoe UI", 10, "bold"), pady=6).pack(side="left", fill="x", expand=True, padx=(0, 6))
         tk.Button(acc, text="Limpiar", command=self.limpiar_form,
                   bg=COLORS["bg_entry"], fg="white",
-                  font=("Arial", 9)).pack(side="left")
+                  font=("Segoe UI", 9)).pack(side="left")
 
         self.refresh_combo_productos()
 
     def _build_controles(self):
         frm = tk.Frame(self, bg=COLORS["bg_mid"], pady=4)
-        frm.pack(fill="x", padx=12)
+        frm.pack(fill="x", padx=16)
 
         def btn(parent, text, cmd, bg):
             return tk.Button(parent, text=text, command=cmd, bg=bg,
-                             fg="white", font=("Arial", 8, "bold"), padx=5, pady=2)
+                             fg="white", font=("Segoe UI", 8, "bold"), padx=6, pady=3)
 
-        tk.Label(frm, text="Cocina:", font=("Arial", 8, "bold"),
+        tk.Label(frm, text="Cocina:", font=("Segoe UI", 8, "bold"),
                  bg=COLORS["bg_mid"], fg=COLORS["fg_dim"]).pack(side="left")
-        btn(frm, "Espera",   lambda: self.set_estado("espera"),    "#1565C0").pack(side="left", padx=1)
-        btn(frm, "Armado",   lambda: self.set_estado("armado"),    "#2E7D32").pack(side="left", padx=1)
-        btn(frm, "Horno",    lambda: self.set_estado("horno"),     "#C62828").pack(side="left", padx=1)
-        btn(frm, "Entregado", lambda: self.set_estado("entregado"), "#424242").pack(side="left", padx=1)
+        btn(frm, "Espera",   lambda: self.set_estado("espera"),    "#1565C0").pack(side="left", padx=2)
+        btn(frm, "Armado",   lambda: self.set_estado("armado"),    "#2E7D32").pack(side="left", padx=2)
+        btn(frm, "Horno",    lambda: self.set_estado("horno"),     "#C62828").pack(side="left", padx=2)
+        btn(frm, "Entregado", lambda: self.set_estado("entregado"), "#424242").pack(side="left", padx=2)
 
-        tk.Label(frm, text="  Caja:", font=("Arial", 8, "bold"),
-                 bg=COLORS["bg_mid"], fg=COLORS["fg_dim"]).pack(side="left", padx=(8, 0))
-        btn(frm, "PAGO",    lambda: self.set_pago("SÍ - PAGO"), COLORS["teal"]).pack(side="left", padx=1)
-        btn(frm, "NO PAGO", lambda: self.set_pago("NO PAGO"),   "#AD1457").pack(side="left", padx=1)
+        tk.Label(frm, text="  Caja:", font=("Segoe UI", 8, "bold"),
+                 bg=COLORS["bg_mid"], fg=COLORS["fg_dim"]).pack(side="left", padx=(12, 0))
+        btn(frm, "Pagado", lambda: self.set_pago("SÍ - PAGO"), COLORS["teal"]).pack(side="left", padx=2)
+        btn(frm, "No Pago", lambda: self.set_pago("NO PAGO"), "#AD1457").pack(side="left", padx=2)
 
-        tk.Label(frm, text="  Envío:", font=("Arial", 8, "bold"),
-                 bg=COLORS["bg_mid"], fg=COLORS["fg_dim"]).pack(side="left", padx=(8, 0))
-        btn(frm, "Delivery",       lambda: self.set_envio("Delivery"),         "#E65100").pack(side="left", padx=1)
-        btn(frm, "Retira en local", lambda: self.set_envio("Retira en local"), "#0277BD").pack(side="left", padx=1)
+        tk.Label(frm, text="  Envío:", font=("Segoe UI", 8, "bold"),
+                 bg=COLORS["bg_mid"], fg=COLORS["fg_dim"]).pack(side="left", padx=(12, 0))
+        btn(frm, "Delivery",       lambda: self.set_envio("Delivery"),         "#E65100").pack(side="left", padx=2)
+        btn(frm, "Retira",         lambda: self.set_envio("Retira en local"), "#0277BD").pack(side="left", padx=2)
 
-        tk.Label(frm, text="  Pedido:", font=("Arial", 8, "bold"),
-                 bg=COLORS["bg_mid"], fg=COLORS["fg_dim"]).pack(side="left", padx=(8, 0))
-        btn(frm, "Cancelar", self.cancelar_pedido, COLORS["red"]).pack(side="left", padx=1)
+        tk.Label(frm, text="  Pedido:", font=("Segoe UI", 8, "bold"),
+                 bg=COLORS["bg_mid"], fg=COLORS["fg_dim"]).pack(side="left", padx=(12, 0))
+        btn(frm, "✕ Cancelar", self.cancelar_pedido, COLORS["red"]).pack(side="left", padx=2)
 
     def _build_tabla(self):
-        frm = tk.LabelFrame(self, text=" Órdenes del Turno ",
-                            font=("Arial", 9, "bold"),
-                            bg=COLORS["bg_panel"], fg=COLORS["fg_light"])
-        frm.pack(fill="both", expand=True, padx=12, pady=4)
+        frm = tk.Frame(self, bg=COLORS["bg_panel"], padx=2, pady=2)
+        frm.pack(fill="both", expand=True, padx=16, pady=(6, 4))
+
+        hdr_tbl = tk.Frame(frm, bg=COLORS["bg_panel"])
+        hdr_tbl.pack(fill="x", padx=10, pady=(6, 2))
+        tk.Label(hdr_tbl, text="Órdenes del Turno", font=("Segoe UI", 10, "bold"),
+                 fg=COLORS["accent"], bg=COLORS["bg_panel"]).pack(side="left")
 
         cols = ("hora", "nombre", "detalle", "total", "pago", "envio")
         self.tree = ttk.Treeview(frm, columns=cols, show="headings")
         for col, txt, w, anch in [
             ("hora",    "Hora",      88,  "center"),
             ("nombre",  "Cliente",   130,  "w"),
-            ("detalle", "Detalle",   410,  "w"),
+            ("detalle", "Detalle",   200, "w"),
             ("total",   "Total",      95,  "center"),
             ("pago",    "Caja",       95,  "center"),
             ("envio",   "Envío",     135,  "center"),
         ]:
             self.tree.heading(col, text=txt)
             self.tree.column(col, width=w, anchor=anch)
+        self.tree.column("detalle", stretch=True)
 
         self.tree.tag_configure("espera",    background=COLORS["espera_bg"], foreground=COLORS["espera_fg"])
         self.tree.tag_configure("armado",    background=COLORS["armado_bg"], foreground=COLORS["armado_fg"])
@@ -334,14 +346,14 @@ class PedidosTab(tk.Frame):
 
         sb = ttk.Scrollbar(frm, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=sb.set)
-        self.tree.pack(side="left", fill="both", expand=True)
-        sb.pack(side="right", fill="y")
+        self.tree.pack(side="left", fill="both", expand=True, padx=(8, 0), pady=(0, 8))
+        sb.pack(side="right", fill="y", pady=(0, 8))
 
     def _build_footer(self):
-        tk.Button(self, text="FINALIZAR SERVICIO — RESTAR STOCK Y GENERAR BALANCE",
+        tk.Button(self, text="Finalizar Servicio — Restar Stock & Generar Balance",
                   command=self.finalizar_servicio,
                   bg=COLORS["purple"], fg="white",
-                  font=("Arial", 11, "bold"), pady=9).pack(fill="x", padx=12, pady=(0, 8))
+                  font=("Segoe UI", 10, "bold"), pady=8).pack(fill="x", padx=16, pady=(4, 10))
 
     def refresh_combo_productos(self):
         grupos = self.cfg.grupos
@@ -698,17 +710,20 @@ class StockTab(tk.Frame):
 
     def _build_ui(self):
         hdr = tk.Frame(self, bg=COLORS["bg_mid"], pady=6)
-        hdr.pack(fill="x", padx=12, pady=(8, 0))
-        tk.Label(hdr, text="CONTROL DE STOCK", font=("Arial", 13, "bold"),
-                 fg=COLORS["accent"], bg=COLORS["bg_mid"]).pack(side="left")
-        tk.Button(hdr, text="Actualizar", command=self.cargar_stock,
+        hdr.pack(fill="x", padx=16, pady=(10, 0))
+        tk.Label(hdr, text="Stock", font=("Segoe UI", 14, "bold"),
+                 fg=COLORS["fg_light"], bg=COLORS["bg_mid"]).pack(side="left")
+        tk.Button(hdr, text="🔄 Actualizar", command=self.cargar_stock,
                   bg=COLORS["blue"], fg="white",
-                  font=("Arial", 9, "bold")).pack(side="right")
+                  font=("Segoe UI", 9, "bold"), padx=10).pack(side="right")
 
-        frm = tk.LabelFrame(self, text=" Stock Actual (desde Excel) ",
-                            font=("Arial", 9, "bold"),
-                            bg=COLORS["bg_panel"], fg=COLORS["fg_light"])
-        frm.pack(fill="both", expand=True, padx=12, pady=6)
+        frm = tk.Frame(self, bg=COLORS["bg_panel"], padx=2, pady=2)
+        frm.pack(fill="both", expand=True, padx=16, pady=(8, 4))
+
+        hdr_tbl = tk.Frame(frm, bg=COLORS["bg_panel"])
+        hdr_tbl.pack(fill="x", padx=10, pady=(6, 2))
+        tk.Label(hdr_tbl, text="Stock Actual (desde Excel)", font=("Segoe UI", 10, "bold"),
+                 fg=COLORS["accent"], bg=COLORS["bg_panel"]).pack(side="left")
 
         cols = ("producto", "inicio", "ocupado", "costo_ocu", "restante")
         self.tree = ttk.Treeview(frm, columns=cols, show="headings")
@@ -728,14 +743,14 @@ class StockTab(tk.Frame):
 
         sb = ttk.Scrollbar(frm, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=sb.set)
-        self.tree.pack(side="left", fill="both", expand=True)
-        sb.pack(side="right", fill="y")
+        self.tree.pack(side="left", fill="both", expand=True, padx=(8, 0), pady=(0, 8))
+        sb.pack(side="right", fill="y", pady=(0, 8))
 
-        self.frm_entradas = tk.LabelFrame(self, text=" Cargar Stock Inicial ",
-                                          font=("Arial", 9, "bold"),
-                                          bg=COLORS["bg_panel"], fg=COLORS["fg_light"],
-                                          padx=10, pady=8)
-        self.frm_entradas.pack(fill="x", padx=12, pady=(0, 8))
+        self.frm_entradas = tk.Frame(self, bg=COLORS["bg_panel"], padx=14, pady=10)
+        self.frm_entradas.pack(fill="x", padx=16, pady=(0, 10))
+        tk.Label(self.frm_entradas, text="Cargar Stock Inicial",
+                 font=("Segoe UI", 10, "bold"),
+                 fg=COLORS["accent"], bg=COLORS["bg_panel"]).pack(anchor="w", pady=(0, 6))
         self._reconstruir_entradas()
 
         self.cargar_stock()
@@ -914,13 +929,12 @@ class ConfigTab(tk.Frame):
 
     def _build_ui(self):
         hdr = tk.Frame(self, bg=COLORS["bg_mid"], pady=6)
-        hdr.pack(fill="x", padx=12, pady=(8, 0))
-        tk.Label(hdr, text="CONFIGURACIÓN DE CARTA Y RECETAS",
-                 font=("Arial", 13, "bold"),
-                 fg=COLORS["accent"], bg=COLORS["bg_mid"]).pack(side="left")
+        hdr.pack(fill="x", padx=16, pady=(10, 0))
+        tk.Label(hdr, text="Configuración", font=("Segoe UI", 14, "bold"),
+                 fg=COLORS["fg_light"], bg=COLORS["bg_mid"]).pack(side="left")
 
         nb = ttk.Notebook(self)
-        nb.pack(fill="both", expand=True, padx=12, pady=6)
+        nb.pack(fill="both", expand=True, padx=16, pady=(8, 4))
 
         self.tab_costos   = tk.Frame(nb, bg=COLORS["bg_mid"])
         self.tab_precios  = tk.Frame(nb, bg=COLORS["bg_mid"])
@@ -934,11 +948,11 @@ class ConfigTab(tk.Frame):
         self._build_precios()
         self._build_recetas()
 
-        tk.Button(self, text="GUARDAR CONFIGURACIÓN Y APLICAR",
+        tk.Button(self, text="💾 Guardar Configuración y Aplicar",
                   command=self.guardar_config,
                   bg=COLORS["purple"], fg="white",
-                  font=("Arial", 11, "bold"), pady=8).pack(
-                  fill="x", padx=12, pady=(0, 10))
+                  font=("Segoe UI", 10, "bold"), pady=8).pack(
+                  fill="x", padx=16, pady=(0, 10))
 
     def _build_costos(self):
         tk.Label(self.tab_costos,
@@ -1353,31 +1367,37 @@ class EstadisticasTab(tk.Frame):
 
     def _build_ui(self):
         hdr = tk.Frame(self, bg=COLORS["bg_mid"], pady=6)
-        hdr.pack(fill="x", padx=12, pady=(8, 0))
-        tk.Label(hdr, text="ESTADÍSTICAS DE VENTAS", font=("Arial", 13, "bold"),
-                 fg=COLORS["accent"], bg=COLORS["bg_mid"]).pack(side="left")
-        tk.Button(hdr, text="Actualizar", command=self.actualizar,
+        hdr.pack(fill="x", padx=16, pady=(10, 0))
+        tk.Label(hdr, text="Estadísticas", font=("Segoe UI", 14, "bold"),
+                 fg=COLORS["fg_light"], bg=COLORS["bg_mid"]).pack(side="left")
+        tk.Button(hdr, text="🔄 Actualizar", command=self.actualizar,
                   bg=COLORS["blue"], fg="white",
-                  font=("Arial", 9, "bold")).pack(side="right")
+                  font=("Segoe UI", 9, "bold"), padx=10).pack(side="right")
 
-        # Contador total
-        self.lbl_total = tk.Label(self, text="Cargando...",
-                                  font=("Arial", 20, "bold"),
-                                  fg=COLORS["accent"], bg=COLORS["bg_mid"])
-        self.lbl_total.pack(fill="x", padx=12, pady=(4, 0))
+        # Card: Total acumulado
+        card_total = tk.Frame(self, bg=COLORS["bg_panel"], padx=16, pady=12)
+        card_total.pack(fill="x", padx=16, pady=(8, 0))
+        tk.Label(card_total, text="Ventas Acumuladas",
+                 font=("Segoe UI", 9, "bold"),
+                 fg=COLORS["fg_dim"], bg=COLORS["bg_panel"]).pack(anchor="w")
+        self.lbl_total = tk.Label(card_total, text="Cargando...",
+                                  font=("Segoe UI", 24, "bold"),
+                                  fg=COLORS["accent"], bg=COLORS["bg_panel"])
+        self.lbl_total.pack(fill="x", anchor="w")
 
-        tk.Label(self, text="(ventas acumuladas desde que se usa el sistema)",
-                 font=("Arial", 8), fg=COLORS["fg_dim"],
-                 bg=COLORS["bg_mid"]).pack(fill="x", padx=12)
+        # Card: Grafico
+        frm = tk.Frame(self, bg=COLORS["bg_panel"], padx=2, pady=2)
+        frm.pack(fill="both", expand=True, padx=16, pady=(8, 10))
 
-        # Canvas para el grafico de barras
-        frm = tk.LabelFrame(self, text=" Productos más vendidos ",
-                            font=("Arial", 9, "bold"),
-                            bg=COLORS["bg_panel"], fg=COLORS["fg_light"])
-        frm.pack(fill="both", expand=True, padx=12, pady=8)
+        hdr_chart = tk.Frame(frm, bg=COLORS["bg_panel"])
+        hdr_chart.pack(fill="x", padx=10, pady=(6, 2))
+        tk.Label(hdr_chart, text="Productos más vendidos",
+                 font=("Segoe UI", 10, "bold"),
+                 fg=COLORS["accent"], bg=COLORS["bg_panel"]).pack(side="left")
+
         self.canvas = tk.Canvas(frm, bg=COLORS["bg_dark"],
                                 highlightthickness=0)
-        self.canvas.pack(fill="both", expand=True)
+        self.canvas.pack(fill="both", expand=True, padx=(8, 0), pady=(0, 8))
 
         self.actualizar()
 
@@ -1485,7 +1505,57 @@ class App(tk.Tk):
         self.option_add("*TCombobox*Listbox.selectBackground", COLORS["accent"])
         self.option_add("*TCombobox*Listbox.selectForeground", "white")
 
+    def _crear_btn_nav(self, parent, icon, text, tab):
+        frm = tk.Frame(parent, bg=COLORS["bg_panel"], cursor="hand2")
+        frm.pack(fill="x", padx=0, pady=0)
+
+        # Indicator bar
+        ind = tk.Frame(frm, width=3, bg=COLORS["bg_panel"])
+        ind.pack(side="left", fill="y")
+
+        lbl = tk.Label(frm, text=f"  {icon}  {text}",
+                       font=("Segoe UI", 11), anchor="w",
+                       bg=COLORS["bg_panel"], fg=COLORS["fg_dim"],
+                       padx=12, pady=10)
+        lbl.pack(side="left", fill="x", expand=True)
+
+        def on_enter(e):
+            if self._tab_actual is not tab:
+                frm.config(bg=COLORS["bg_entry"])
+                lbl.config(bg=COLORS["bg_entry"])
+                ind.config(bg=COLORS["bg_entry"])
+
+        def on_leave(e):
+            if self._tab_actual is not tab:
+                frm.config(bg=COLORS["bg_panel"])
+                lbl.config(bg=COLORS["bg_panel"])
+                ind.config(bg=COLORS["bg_panel"])
+
+        def on_click(e):
+            self._mostrar_tab(tab)
+
+        frm.bind("<Enter>", on_enter)
+        frm.bind("<Leave>", on_leave)
+        frm.bind("<Button-1>", on_click)
+        lbl.bind("<Button-1>", on_click)
+        ind.bind("<Button-1>", on_click)
+
+        return {"frame": frm, "label": lbl, "indicator": ind}
+
+    def _mostrar_tab(self, tab):
+        if self._tab_actual:
+            self._tab_actual.pack_forget()
+        self._tab_actual = tab
+        tab.pack(fill="both", expand=True)
+        for t, btn in self._nav_buttons.items():
+            active = t is tab
+            btn["frame"].config(bg=COLORS["bg_entry"] if active else COLORS["bg_panel"])
+            btn["label"].config(bg=COLORS["bg_entry"] if active else COLORS["bg_panel"],
+                                fg=COLORS["accent"] if active else COLORS["fg_dim"])
+            btn["indicator"].config(bg=COLORS["accent"] if active else COLORS["bg_panel"])
+
     def _build_ui(self):
+        # ── TOP BAR ──
         hdr = tk.Frame(self, bg=COLORS["bg_mid"], pady=0)
         hdr.pack(fill="x")
         inner = tk.Frame(hdr, bg=COLORS["bg_mid"], pady=10)
@@ -1493,32 +1563,68 @@ class App(tk.Tk):
         tk.Label(inner, text="LA HOGAZA MADRE",
                  font=("Segoe UI", 16, "bold"),
                  fg=COLORS["accent"], bg=COLORS["bg_mid"]).pack(side="left")
-        tk.Label(inner, text=f"Gestión de Pedidos v{APP_VERSION}",
+        tk.Label(inner, text=f"Gestión v{APP_VERSION}",
                  font=("Segoe UI", 9), fg=COLORS["fg_dim"],
                  bg=COLORS["bg_mid"]).pack(side="left", padx=(10, 0))
-        tk.Label(inner, text=datetime.now().strftime("%A %d/%m/%Y").upper(),
+        tk.Label(inner, text=datetime.now().strftime("%a %d/%m/%Y").upper(),
                  font=("Segoe UI", 8, "bold"), fg=COLORS["fg_dim"],
                  bg=COLORS["bg_mid"]).pack(side="right", padx=(0, 4))
-        # Linea decorativa
         tk.Frame(hdr, height=2, bg=COLORS["accent"]).pack(fill="x")
 
+        # ── STATUS BAR (must be before tabs, they call _status on init) ──
         self.lbl_status = tk.Label(self, text="Sistema listo.",
                                     font=("Segoe UI", 9), fg=COLORS["fg_dim"],
                                     bg=COLORS["bg_dark"], anchor="w", padx=16, pady=4)
         self.lbl_status.pack(fill="x", side="bottom")
 
-        self.nb = ttk.Notebook(self)
-        self.nb.pack(fill="both", expand=True, padx=8, pady=(0, 4))
+        # ── MAIN CONTENT: SIDEBAR + CONTENT ──
+        main = tk.Frame(self, bg=COLORS["bg_dark"])
+        main.pack(fill="both", expand=True)
 
-        self.tab_pedidos  = PedidosTab(self.nb,    self.cfg, self._status)
-        self.tab_stock    = StockTab(self.nb,      self.cfg, self._status)
-        self.tab_config   = ConfigTab(self.nb,     self.cfg, self._status, self._on_config_saved)
-        self.tab_estadisticas = EstadisticasTab(self.nb, self._status)
+        # Sidebar
+        sidebar = tk.Frame(main, bg=COLORS["bg_panel"], width=150)
+        sidebar.pack(side="left", fill="y")
+        sidebar.pack_propagate(False)
 
-        self.nb.add(self.tab_pedidos,  text="  Gestión de Pedidos  ")
-        self.nb.add(self.tab_stock,    text="  Control de Stock  ")
-        self.nb.add(self.tab_config,   text="  Carta y Recetas  ")
-        self.nb.add(self.tab_estadisticas, text="  Estadísticas  ")
+        # Logo area
+        logo_frm = tk.Frame(sidebar, bg=COLORS["bg_panel"], pady=14)
+        logo_frm.pack(fill="x")
+        tk.Label(logo_frm, text="🍕", font=("Segoe UI", 20),
+                 bg=COLORS["bg_panel"], fg=COLORS["accent"]).pack()
+        tk.Label(logo_frm, text="Menú", font=("Segoe UI", 8, "bold"),
+                 bg=COLORS["bg_panel"], fg=COLORS["fg_dim"]).pack()
+        tk.Frame(sidebar, height=1, bg=COLORS["bg_entry"]).pack(fill="x", padx=12, pady=4)
+
+        # Content area
+        self.content = tk.Frame(main, bg=COLORS["bg_dark"])
+        self.content.pack(side="left", fill="both", expand=True)
+
+        # Create tabs
+        self.tab_pedidos  = PedidosTab(self.content, self.cfg, self._status)
+        self.tab_stock    = StockTab(self.content, self.cfg, self._status)
+        self.tab_config   = ConfigTab(self.content, self.cfg, self._status, self._on_config_saved)
+        self.tab_estadisticas = EstadisticasTab(self.content, self._status)
+
+        # Navigation buttons
+        self._tab_actual = None
+        self._nav_buttons = {}
+        nav_items = [
+            ("📋", "Pedidos",    self.tab_pedidos),
+            ("📦", "Stock",      self.tab_stock),
+            ("⚙️", "Config.",    self.tab_config),
+            ("📊", "Stats",      self.tab_estadisticas),
+        ]
+        for icon, text, tab in nav_items:
+            btn = self._crear_btn_nav(sidebar, icon, text, tab)
+            self._nav_buttons[tab] = btn
+
+        # Version en sidebar
+        tk.Frame(sidebar, height=1, bg=COLORS["bg_entry"]).pack(fill="x", padx=12, pady=4)
+        tk.Label(sidebar, text=f"v{APP_VERSION}",
+                 font=("Segoe UI", 8), fg=COLORS["fg_dim"],
+                 bg=COLORS["bg_panel"]).pack(side="bottom", pady=8)
+
+        self._mostrar_tab(self.tab_pedidos)
 
         self.bind("<Return>", lambda e: self.tab_pedidos.agregar_producto())
         self.bind("<F5>",     lambda e: self.tab_pedidos.guardar_pedido())
