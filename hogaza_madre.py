@@ -188,8 +188,8 @@ class PedidosTab(tk.Frame):
         self._build_header()
         self._build_form()
         self._build_controles()
-        self._build_tabla()
         self._build_footer()
+        self._build_tabla()
 
     def _build_header(self):
         hdr = tk.Frame(self, bg=COLORS["bg_mid"], pady=6)
@@ -353,7 +353,8 @@ class PedidosTab(tk.Frame):
         tk.Button(self, text="Finalizar Servicio — Restar Stock & Generar Balance",
                   command=self.finalizar_servicio,
                   bg=COLORS["purple"], fg="white",
-                  font=("Segoe UI", 10, "bold"), pady=8).pack(fill="x", padx=16, pady=(4, 10))
+                  font=("Segoe UI", 10, "bold"), pady=8).pack(
+                  fill="x", padx=16, pady=(4, 10), side="bottom")
 
     def refresh_combo_productos(self):
         grupos = self.cfg.grupos
